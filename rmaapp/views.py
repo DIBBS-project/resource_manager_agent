@@ -1,3 +1,27 @@
 from django.shortcuts import render
+import django.contrib.auth
 
-# Create your views here.
+from serializers import UserSerializer
+
+from rest_framework import viewsets, permissions, status
+from rest_framework.response import Response
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions.
+    """
+    queryset = django.contrib.auth.get_user_model().objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def create(self, request, *args, **kwargs):
+        data2 = {}
+        for key in request.data:
+            data2[key] = request.data[key]
+        serializer = self.get_serializer(data=data2)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

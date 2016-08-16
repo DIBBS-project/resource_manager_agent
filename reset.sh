@@ -1,6 +1,6 @@
 #! /bin/bash
 
-APPS=pmaapp
+APPS=rmaapp
 
 echo "[RESET] Resetting the application..."
 rm -rf tmp
