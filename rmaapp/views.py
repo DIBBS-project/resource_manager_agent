@@ -43,11 +43,11 @@ def create_account(request):
         return ''.join(random.choice(chars) for _ in range(size))
 
     ts = time.time()
-    st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+    st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d_%H-%M-%S')
     rn = random.randint(0, sys.maxint)
 
     user_data = {
-        "username": (st + ' ' + str(rn))[:30],
+        "username": (st + '_' + str(rn))[:30],
         "password": password_generator(20)
     }
 
