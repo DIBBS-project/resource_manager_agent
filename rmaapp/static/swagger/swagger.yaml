@@ -1,0 +1,326 @@
+swagger: '2.0'
+info:
+  title: Resource manager agent API
+  description: Provision Cloud Computing resources via API.
+  version: "0.1.1"
+# the domain of the service
+host: 127.0.0.1:8022
+# array of all schemes that your API supports
+schemes:
+# TODO: Change to HTTPS when not on localhost!
+  - http
+# will be prefixed to all paths
+#basePath: /rmaapp
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  api_key:
+    type: apiKey
+    name: Authorization
+    in: header
+  basic:
+    type: basic
+paths:
+  /users/:
+    get:
+      summary: Get the list of all the users registered.
+      description: |
+        Get the list of all the users registered. No authentification is required.
+      tags:
+        - Users
+      responses:
+        200:
+          description: An array of users
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Register a new user.
+      description: |
+        Register a new user. Authentification is required.
+      security:
+        - basic: []
+        - api_key: []
+
+      parameters:
+        - name: data
+          in: body
+          description: User
+          required: true
+          schema:
+            $ref: '#/definitions/UserPost'
+      tags:
+        - Users
+      responses:
+        201:
+          description: The newly created user
+          schema:
+            $ref: '#/definitions/User'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /users/{id}/:
+    get:
+      summary: Get a single user.
+      description: |
+        Get a single user. Authentification is required.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the user
+          required: true
+          type: integer
+          minimum: 0
+      tags:
+        - Users
+      responses:
+        200:
+          description: The user matching the given ID
+          schema:
+            $ref: '#/definitions/User'
+        404:
+          description: No user with the given ID
+          schema:
+            $ref: '#/definitions/Error'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Redefine an already existing user.
+      description: |
+        Redefine an already existing user. Authentification is required.
+      security:
+        - basic: []
+        - api_key: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of the user
+          required: true
+          type: integer
+          minimum: 0
+        - name: data
+          in: body
+          description: User
+          required: true
+          schema:
+            $ref: '#/definitions/UserPost'
+      tags:
+        - Users
+      responses:
+        200:
+          description: The updated user
+          schema:
+            $ref: '#/definitions/User'
+        404:
+          description: No user with the given ID
+          schema:
+            $ref: '#/definitions/Error'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    patch:
+      summary: Modify an already existing user.
+      description: |
+        Modify an already existing user. Authentification is required.
+      security:
+        - basic: []
+        - api_key: []
+
+      parameters:
+        - name: id
+          in: path
+          description: ID of the user
+          required: true
+          type: integer
+          minimum: 0
+        - name: data
+          in: body
+          description: User
+          required: true
+          schema:
+            $ref: '#/definitions/UserPatch'
+      tags:
+        - Users
+      responses:
+        200:
+          description: The updated user
+          schema:
+            $ref: '#/definitions/User'
+        404:
+          description: No user with the given ID
+          schema:
+            $ref: '#/definitions/Error'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Delete an already existing user.
+      description: |
+        Delete an already existing user. Authentification is required.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the user
+          required: true
+          type: integer
+          minimum: 0
+      security:
+        - basic: []
+        - api_key: []
+      tags:
+        - Users
+      responses:
+        204:
+          description: User correctly deleted
+        404:
+          description: No user with the given ID
+          schema:
+            $ref: '#/definitions/Error'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /new_account/:
+    post:
+      summary: Creates a new account on the Process Manager Agent and returns the credentials.
+      description: |
+        Creates a new account on the Process Manager Agent and returns the credentials. Authentification is required.
+      tags:
+        - Actions
+      responses:
+        202:
+          description: The credentials of the new user
+          schema:
+            $ref: '#/definitions/Credentials'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /api-token-auth/:
+    post:
+      summary: Get the authentification token for a user.
+      description: |
+        Get the authentification token for a user by providing his username and password. No authentification is required; however the credentials of the user are part of the request.
+      parameters:
+        - name: data
+          in: body
+          description: User credentials
+          required: true
+          schema:
+            $ref: '#/definitions/Credentials'
+      tags:
+        - Users
+      responses:
+        200:
+          description: The authentification token of the user
+          schema:
+            $ref: '#/definitions/TokenResp'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Unique identifier representing a specific user
+      username:
+        type: string
+        description: Name given to the user
+      first_name:
+        type: string
+        description: First name of the user
+      last_name:
+        type: string
+        description: Last name of the user
+      email:
+        type: string
+        description: Email of the user
+      is_staff:
+        type: integer
+        description: Boolean stating wether the user is a staff member or not
+      is_superuser:
+        type: integer
+        description: Boolean stating wether the user is a superuser or not
+      is_active:
+        type: integer
+        description: Boolean stating wether the user is active or not
+      date_joined:
+        type: string
+        format: date-time
+        description: Date and time of creation of the user
+  UserPost:
+    type: object
+    required:
+      - username
+      - password
+    properties:
+      username:
+        type: string
+        description: Name given to the user
+      password:
+        type: string
+        description: Password of the user
+      first_name:
+        type: string
+        description: First name of the user
+      last_name:
+        type: string
+        description: Last name of the user
+      email:
+        type: string
+        description: Email of the user
+  UserPatch:
+    type: object
+    properties:
+      username:
+        type: string
+        description: Name given to the user
+      password:
+        type: string
+        description: Password of the user
+      first_name:
+        type: string
+        description: First name of the user
+      last_name:
+        type: string
+        description: Last name of the user
+      email:
+        type: string
+        description: Email of the user
+  Error:
+    type: object
+    properties:
+      detail:
+        type: string
+  TokenResp:
+    type: object
+    properties:
+      token:
+        type: string
+  Credentials:
+    type: object
+    required:
+      - username
+      - password
+    properties:
+      username:
+        description: Username of the user
+        type: string
+      password:
+        description: Password of the user
+        type: string

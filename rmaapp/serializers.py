@@ -3,8 +3,6 @@ import django.contrib.auth
 
 
 class UserSerializer(serializers.ModelSerializer):
-    ops = serializers.PrimaryKeyRelatedField(many=True, queryset=Op.objects.all())
-
     class Meta:
         model = django.contrib.auth.get_user_model()
         fields = ('id', 'username', 'first_name', 'last_name', 'email', 'is_staff', 'is_superuser', 'is_active',
