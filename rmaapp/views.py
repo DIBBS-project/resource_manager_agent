@@ -34,21 +34,17 @@ def create_account(request):
     from pma_client.apis.users_api import UsersApi
     from pma_client.configure import configure_auth_basic
     import string
-    import time
-    import datetime
     import random
     import sys
 
-    def password_generator(size, chars=string.ascii_uppercase + string.ascii_lowercase + string.digits):
+    def generate_random_string(size, chars=string.ascii_uppercase + string.ascii_lowercase + string.digits):
         return ''.join(random.choice(chars) for _ in range(size))
 
-    ts = time.time()
-    st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d_%H-%M-%S')
-    rn = random.randint(0, sys.maxint)
+    username = "user_%s" % (generate_random_string(25))
 
     user_data = {
-        "username": (st + '_' + str(rn))[:30],
-        "password": password_generator(20)
+        "username": username,
+        "password": generate_random_string(20)
     }
 
     configure_auth_basic("admin", "pass")  # TODO: Change to a user that is not a superuser (created in User Data)
