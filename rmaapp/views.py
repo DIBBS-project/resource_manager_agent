@@ -6,6 +6,15 @@ from serializers import UserSerializer
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+import base64
+
+
+def configure_basic_authentication(swagger_client, username, password):
+    authentication_string = "%s:%s" % (username, password)
+    base64_authentication_string = base64.b64encode(bytes(authentication_string))
+    header_key = "Authorization"
+    header_value = "Basic %s" % (base64_authentication_string, )
+    swagger_client.api_client.default_headers[header_key] = header_value
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -32,7 +41,6 @@ class UserViewSet(viewsets.ModelViewSet):
 @csrf_exempt
 def create_account(request):
     from oma_client.apis.users_api import UsersApi
-    from oma_client.configure import configure_auth_basic
     import string
     import random
     import sys
@@ -47,8 +55,9 @@ def create_account(request):
         "password": generate_random_string(20)
     }
 
-    configure_auth_basic("admin", "pass")  # TODO: Change to a user that is not a superuser (created in User Data)
+    users_client = UsersApi()
+    configure_basic_authentication(users_client, "admin", "pass")  # TODO: Change to a user that is not a superuser (created in User Data)
 
-    UsersApi().users_post(data=user_data)
+    users_client .users_post(data=user_data)
 
     return Response(user_data, status=status.HTTP_202_ACCEPTED)
