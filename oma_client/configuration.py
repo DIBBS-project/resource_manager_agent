@@ -1,9 +1,9 @@
 # coding: utf-8
 
 """
-    Process manager agent API
+    Operation Manager Agent API
 
-    Provision Cloud Computing resources via API.
+    Interact with deployed Cloud Computing resources via API.
 
     OpenAPI spec version: 0.1.1
     
@@ -25,8 +25,6 @@
 from __future__ import absolute_import
 import base64
 import urllib3
-
-from settings import Settings
 
 try:
     import httplib
@@ -63,7 +61,7 @@ class Configuration(object):
         Constructor
         """
         # Default Base url
-        self.host = Settings().operation_manager_agent_url
+        self.host = "http://127.0.0.1:8011"
         # Default api client
         self.api_client = None
         # Temp file folder for downloading files

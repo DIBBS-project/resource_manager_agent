@@ -31,8 +31,8 @@ class UserViewSet(viewsets.ModelViewSet):
 @api_view(['POST'])
 @csrf_exempt
 def create_account(request):
-    from pma_client.apis.users_api import UsersApi
-    from pma_client.configure import configure_auth_basic
+    from oma_client.apis.users_api import UsersApi
+    from oma_client.configure import configure_auth_basic
     import string
     import random
     import sys
