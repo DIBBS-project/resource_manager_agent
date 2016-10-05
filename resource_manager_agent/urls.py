@@ -14,6 +14,7 @@ urlpatterns = [
 
     url(r'^new_account/$', views.create_account),
 
+    url(r'^add_to_host_file/$', views.add_to_host_file),
 ]
 
 
